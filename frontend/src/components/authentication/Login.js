@@ -12,17 +12,17 @@ const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
-  const [email, setEmail] = useState();
+  const [phone_number, setPhoneNumber] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
   const { user, setUser } = ChatState();
 
-  const history = useNavigate();
-  axios.defaults.baseURL = "http://127.0.0.1:5000/";
+  const navigate = useNavigate();
+  axios.defaults.baseURL = "http://127.0.0.1:8000/";
 
   const submitHandler = async () => {
     setLoading(true);
-    if (!email || !password) {
+    if (!phone_number || !password) {
       toast({
         title: "Please Fill all the Feilds",
         status: "warning",
@@ -34,32 +34,25 @@ const Login = () => {
       return;
     }
 
-    // console.log(email, password);
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-
-      const { data } = await axios.post(
-        "api/user/login",
-        { email, password },
-        config
-      );
-
-      // console.log(JSON.stringify(data));
-      toast({
-        title: "Login Successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
+      const { data } = await axios.post("login/", {
+        phone_number: phone_number,
+        password: password,
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setUser(data);
+      if (data) {
+        console.log(data);
+        toast({
+          title: "Login Successful",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        localStorage.setItem("userInfo", JSON.stringify(data.data));
+        setUser(data.data);
+        navigate("/chats");
+      }
       setLoading(false);
-      history.push("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -75,13 +68,13 @@ const Login = () => {
 
   return (
     <VStack spacing="10px">
-      <FormControl id="email" isRequired>
-        <FormLabel>Email Address</FormLabel>
+      <FormControl id="phone_number" isRequired>
+        <FormLabel>Phone Number</FormLabel>
         <Input
-          value={email}
-          type="email"
-          placeholder="Enter Your Email Address"
-          onChange={(e) => setEmail(e.target.value)}
+          value={phone_number}
+          type="number"
+          placeholder="Enter Your phone number"
+          onChange={(e) => setPhoneNumber(e.target.value)}
         />
       </FormControl>
       <FormControl id="password" isRequired>
@@ -113,8 +106,8 @@ const Login = () => {
         colorScheme="red"
         width="100%"
         onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
+          setPhoneNumber("1234567890");
+          setPassword("guest");
         }}>
         Get Guest User Credentials
       </Button>

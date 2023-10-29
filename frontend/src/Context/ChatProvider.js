@@ -9,7 +9,7 @@ const ChatProvider = ({ children }) => {
   const [notification, setNotification] = useState([]);
   const [chats, setChats] = useState([]);
   const [userData, setUserData] = useState([]);
-
+  const [phone, setPhone] = useState("");
   const history = useNavigate();
 
   useEffect(() => {
@@ -33,6 +33,8 @@ const ChatProvider = ({ children }) => {
         setChats,
         userData,
         setUserData,
+        phone,
+        setPhone,
       }}>
       {children}
     </ChatContext.Provider>

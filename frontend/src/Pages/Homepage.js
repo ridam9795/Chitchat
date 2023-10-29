@@ -8,7 +8,7 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Login from "../components/authentication/Login";
 import Signup from "../components/authentication/Signup";
@@ -23,7 +23,7 @@ function Homepage() {
   }, [history]);
 
   return (
-    <Container maxW="xl" centerContent>
+    <div className="container" maxW="xl" centerContent>
       <Box
         d="flex"
         justifyContent="center"
@@ -33,8 +33,8 @@ function Homepage() {
         m="40px 0 15px 0"
         borderRadius="lg"
         borderWidth="1px">
-        <Text fontSize="4xl" fontFamily="Work sans">
-          Talk-A-Tive
+        <Text fontSize="4xl" fontFamily="Work sans" align={"center"}>
+          Chit-Chat
         </Text>
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
@@ -53,7 +53,7 @@ function Homepage() {
           </TabPanels>
         </Tabs>
       </Box>
-    </Container>
+    </div>
   );
 }
 

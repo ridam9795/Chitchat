@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
         
         user=self.model(phone_number=phone_number,**extra_fields)
         print("user created >>>>>>>>>>>>>>>>>>>>>>>>>>")
+        
         user.set_password(password)
         user.save(using=self._db)
         return user

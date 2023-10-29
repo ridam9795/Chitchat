@@ -15,20 +15,21 @@ import { ChatState } from "../../Context/ChatProvider";
 const Signup = () => {
   const [show, setShow] = useState(false);
   const [name, setName] = useState();
-  const [email, setEmail] = useState();
   const [confirmpassword, setConfirmpassword] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
+  const { phone, setPhone } = ChatState();
   const toast = useToast();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const { setUser } = ChatState();
   const handleClick = () => {
     setShow(!show);
   };
+  axios.defaults.baseURL = "http://127.0.0.1:8000/";
 
   const submitHandler = async () => {
     setLoading(true);
-    if (!name || !email || !password || !confirmpassword) {
+    if (!name || !phone || !password || !confirmpassword) {
       toast({
         title: "Please Fill all the Fields",
         status: "warning",
@@ -50,31 +51,34 @@ const Signup = () => {
       return;
     }
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        "api/user",
-        { name, email, password },
-        config
-      );
-      toast({
-        title: "Registration Successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
+      const { data } = await axios.post("register/", {
+        name: name,
+        phone_number: phone,
+        password: password,
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setUser(data);
+      if (data.status == 200) {
+        toast({
+          title: "Registration Successful",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        navigate("/");
+      } else if (data.status == 409) {
+        toast({
+          title: "User Already Exists",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        navigate("/");
+      }
       setLoading(false);
-      history.push("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",
-        description: error.response.data.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -93,11 +97,12 @@ const Signup = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </FormControl>
-        <FormControl id="email" isRequired>
-          <FormLabel>Email</FormLabel>
+        <FormControl id="phone" isRequired>
+          <FormLabel>Mobile Number</FormLabel>
           <Input
-            placeholder="Enter Your Email"
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter Your Phone Number"
+            onChange={(e) => setPhone(e.target.value)}
+            maxLength={"10"}
           />
         </FormControl>
         <FormControl id="password" isRequired>
