@@ -125,11 +125,15 @@ ASGI_APPLICATION = 'wbbackend.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'chitchat',
+       'USER': 'postgres',
+       'PASSWORD': 'admin',
+       'HOST': 'localhost',
+   }
 }
 
 
@@ -190,3 +194,6 @@ REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': [
     'rest_framework.permissions.AllowAny']}
 
 API_KEY=os.environ.get('API_KEY')
+AUTHENTICATION_BACKENDS = [
+'sketchboard.backends.PhoneAuthenticationBackend'
+]

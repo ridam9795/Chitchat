@@ -8,5 +8,6 @@ urlpatterns = [
     path('register/',views.Register.as_view(),name='register'),
     path('login/',views.Login.as_view(),name='login'),
     path('verify_otp/',views.VerifyOTP.as_view(),name='Verify Otp'),
-    path('searchUser/',views.SearchUser.as_view(),name='Search User')
+    path('searchUser/',views.SearchUser.as_view(),name='Search User'),
+    path('addUser/<str:phoneNumber>',views.AddUser.as_view(),name='Search User'),
 ]

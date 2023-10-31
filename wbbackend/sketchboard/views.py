@@ -3,12 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User
 from .helpers import send_otp_to_phone
-from django.contrib.auth import login,authenticate
 from django.conf import settings
 from django.middleware import csrf
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from .serializers import UserSerializer
+from .backends import PhoneAuthenticationBackend
+from django.contrib.auth import login
+
 
 # Create your views here.
 class index(APIView):
@@ -39,6 +41,7 @@ class Register(APIView):
         except User.DoesNotExist:
             user=User.objects.create_user(phone_number=data.get('phone_number'),otp=send_otp_to_phone(data.get('phone_number')))
             user.first_name=name
+            user.set_password(password)
             user.save()
             return Response({'status':200,'message':'User Registration Successful'})
     
@@ -103,7 +106,9 @@ class Login(APIView):
       
       
         try:
-            user=User.objects.get(phone_number=data.get('phone_number'))
+            # user=User.objects.get(phone_number=data.get('phone_number'))
+            user = PhoneAuthenticationBackend.authenticate(request, username=phone_number, password=password)
+            login(request,user)
         except Exception as e:
             return Response({
                 'message':'User does not exists,please register'  ,
@@ -118,6 +123,7 @@ class Login(APIView):
 
         if user.is_active:
             data = get_token_for_user(user)
+
 
             response.set_cookie(
                 key=settings.SIMPLE_JWT["AUTH_COOKIE"],
@@ -140,4 +146,12 @@ class SearchUser(APIView):
         userSerializer=UserSerializer(user)
         return Response({"status":200,"user":userSerializer.data},status=status.HTTP_200_OK)
         
-    
+class AddUser(APIView):
+    def post(self,request,phoneNumber):
+        logged_in_user_number=request.user
+        print(csrf.get_token(request))
+        # user=User.objects.get(phone_number=logged_in_user_number)
+        print("user: ",logged_in_user_number)
+        print("phoneNumber ", phoneNumber)
+        return Response({'status':200})
+         
